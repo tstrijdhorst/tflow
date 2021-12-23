@@ -7,11 +7,34 @@ import (
 	"github.com/spf13/viper"
 	"gopkg.in/andygrunwald/go-jira.v1"
 	"os"
+	"regexp"
+	"strings"
 )
 
 func main() {
 	initConfig()
-	createNewGitBranch("lol")
+	issueId := ""
+	branchName := issueId
+	normalizedSummary := normalizeForGitBranchName(getJiraIssueSummary(issueId))
+
+	if normalizedSummary != "" {
+		branchName += "/" + normalizedSummary
+	}
+
+	createNewGitBranch(branchName)
+}
+
+func normalizeForGitBranchName(s string) string {
+	s = strings.ToLower(s)
+
+	stripWhiteSpaceRegex := regexp.MustCompile(`\s`)
+	s = stripWhiteSpaceRegex.ReplaceAllString(s, "_")
+
+	stripIllegalCharsRegex := regexp.MustCompile(`[^a-z0-9.\-_/]+`)
+	s = stripIllegalCharsRegex.ReplaceAllString(s, "")
+
+	//Git branch names cannot start with '-' according to https://stackoverflow.com/a/3651867/298593
+	return strings.TrimLeft(s, "-")
 }
 
 func initConfig() {
