@@ -1,6 +1,3 @@
-/*
-Copyright © 2021 Tim Strijdhorst <spammy@strijdhorst.me>
-*/
 package cmd
 
 import (
