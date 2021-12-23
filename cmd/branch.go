@@ -46,6 +46,7 @@ func normalizeForGitBranchName(s string) string {
 	return strings.TrimLeft(s, "-")
 }
 
+//@todo bug, for some reason this deletes files that are locally ignored?
 func createBranchIfNotExistsAndCheckout(name string) {
 	workingDirectory, _ := os.Getwd()
 
