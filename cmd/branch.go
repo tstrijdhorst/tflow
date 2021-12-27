@@ -12,17 +12,16 @@ import (
 	"strings"
 )
 
-// branchCmd represents the branch command
 var branchCmd = &cobra.Command{
 	Use:   "branch <issueId>",
 	Short: "Create and checkout a git branch for the given jira issueId",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		branch(args[0])
+		createBranchFromJiraIssueId(args[0])
 	},
 }
 
-func branch(issueId string) {
+func createBranchFromJiraIssueId(issueId string) {
 	branchName := issueId
 	normalizedSummary := normalizeForGitBranchName(getJiraIssueSummary(issueId))
 
@@ -46,6 +45,7 @@ func normalizeForGitBranchName(s string) string {
 	return strings.TrimLeft(s, "-")
 }
 
+//@todo bug, for some reason this deletes files that are locally ignored?
 func createBranchIfNotExistsAndCheckout(name string) {
 	workingDirectory, _ := os.Getwd()
 
