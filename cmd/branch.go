@@ -6,7 +6,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"gopkg.in/andygrunwald/go-jira.v1"
+	"github.com/tstrijdhorst/JFlow/services"
 	"os"
 	"regexp"
 	"strings"
@@ -69,22 +69,13 @@ func createBranchIfNotExistsAndCheckout(name string) {
 }
 
 func getJiraIssueSummary(id string) string {
-	tp := jira.BasicAuthTransport{
+	jiraService := services.JiraService{
 		Username: viper.GetString("jira.username"),
-		Password: viper.GetString("jira.token"),
+		Token:    viper.GetString("jira.token"),
+		URL:      viper.GetString("jira.url"),
 	}
 
-	client, err := jira.NewClient(tp.Client(), viper.GetString("jira.url"))
-
-	//@todo how to recognize auth failure since apparently it doesnt return an error for that
-
-	if err != nil {
-		fmt.Printf("Error: %w", err)
-	}
-
-	issue, _, err := client.Issue.Get(id, nil)
-
-	return issue.Fields.Summary
+	return jiraService.GetSummaryForIssueId(id)
 }
 
 func init() {
