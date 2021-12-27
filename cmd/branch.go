@@ -1,15 +1,9 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/JFlow/services"
-	"os"
-	"regexp"
-	"strings"
 )
 
 var branchCmd = &cobra.Command{
@@ -22,60 +16,19 @@ var branchCmd = &cobra.Command{
 }
 
 func createBranchFromJiraIssueId(issueId string) {
-	branchName := issueId
-	normalizedSummary := normalizeForGitBranchName(getJiraIssueSummary(issueId))
+	issueSummary := services.JiraService{
+		Username: viper.GetString("jira.username"),
+		Token:    viper.GetString("jira.token"),
+		URL:      viper.GetString("jira.url"),
+	}.GetSummaryForIssueId(issueId)
+	normalizedSummary := services.GitService{}.NormalizeForGitBranchName(issueSummary)
 
+	branchName := issueId
 	if normalizedSummary != "" {
 		branchName += "/" + normalizedSummary
 	}
 
-	createBranchIfNotExistsAndCheckout(branchName)
-}
-
-func normalizeForGitBranchName(s string) string {
-	s = strings.ToLower(s)
-
-	stripWhiteSpaceRegex := regexp.MustCompile(`\s`)
-	s = stripWhiteSpaceRegex.ReplaceAllString(s, "_")
-
-	stripIllegalCharsRegex := regexp.MustCompile(`[^a-z0-9.\-_/]+`)
-	s = stripIllegalCharsRegex.ReplaceAllString(s, "")
-
-	//Git branch names cannot start with '-' according to https://stackoverflow.com/a/3651867/298593
-	return strings.TrimLeft(s, "-")
-}
-
-//@todo bug, for some reason this deletes files that are locally ignored?
-func createBranchIfNotExistsAndCheckout(name string) {
-	workingDirectory, _ := os.Getwd()
-
-	r, err := git.PlainOpen(workingDirectory)
-
-	if err != nil {
-		panic(fmt.Errorf("Fatal error in git repo: %w \n", err))
-	}
-
-	worktree, _ := r.Worktree()
-
-	b := plumbing.NewBranchReferenceName(name)
-
-	// First try to checkout branch
-	err = worktree.Checkout(&git.CheckoutOptions{Create: false, Force: false, Branch: b})
-
-	if err != nil {
-		// got an error - try to create it
-		_ = worktree.Checkout(&git.CheckoutOptions{Create: true, Force: false, Branch: b})
-	}
-}
-
-func getJiraIssueSummary(id string) string {
-	jiraService := services.JiraService{
-		Username: viper.GetString("jira.username"),
-		Token:    viper.GetString("jira.token"),
-		URL:      viper.GetString("jira.url"),
-	}
-
-	return jiraService.GetSummaryForIssueId(id)
+	services.GitService{}.CreateBranchIfNotExistsAndCheckout(branchName)
 }
 
 func init() {
