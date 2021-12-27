@@ -13,6 +13,17 @@ type GitService struct {
 	repository *git.Repository
 }
 
+func (g GitService) GetCurrentBranchName() string {
+	headRef, err := g.getRepository().Head()
+
+	if err != nil {
+		panic(fmt.Errorf("Unable to get HEAD: %w", err))
+	}
+
+	//@todo what happens when headref is a commit and not a branch?
+	return headRef.Name().String()
+}
+
 //@todo bug, for some reason this deletes files that are locally ignored?
 func (g GitService) CreateBranchIfNotExistsAndCheckout(name string) {
 	worktree, err := g.getRepository().Worktree()
