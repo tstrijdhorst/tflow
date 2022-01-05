@@ -1,7 +1,3 @@
-/*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
@@ -11,8 +7,8 @@ import (
 	"github.com/tstrijdhorst/JFlow/services"
 )
 
-// mergeCmd represents the merge command
-var mergeCmd = &cobra.Command{
+// prCmd represents the merge command
+var prCmd = &cobra.Command{
 	Use:   "pr",
 	Short: "Creates a PR for the current branch with a title equal to the issue id and summary",
 	Long:  `Creates a PR for the current branch with a title equal to the issue id and summary`,
@@ -40,18 +36,19 @@ func createPR() {
 	prTitle := fmt.Sprintf("%v %v", issueId, issueSummary)
 
 	//Create PR at github with the given title
+	services.GitHubService{}.CreatePullRequest(prTitle)
 }
 
 func init() {
-	rootCmd.AddCommand(mergeCmd)
+	rootCmd.AddCommand(prCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// mergeCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// prCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// mergeCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// prCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
