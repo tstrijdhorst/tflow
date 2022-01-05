@@ -17,7 +17,7 @@ func main() {
 }
 
 const (
-	FileName  = "config.yml"
+	FileName  = "config"
 	Directory = ".config/jflow"
 )
 
@@ -29,6 +29,7 @@ func initConfig() {
 	}
 
 	viper.SetConfigName(FileName)
+	viper.SetConfigType("yaml")
 	viper.AddConfigPath(homeDir + "/" + Directory)
 	err = viper.ReadInConfig()
 
