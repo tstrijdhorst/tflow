@@ -3,17 +3,19 @@ package services
 import (
 	"fmt"
 	"gopkg.in/andygrunwald/go-jira.v1"
+	"regexp"
 )
 
 type JiraService struct {
 	Token    string
 	Username string
 	URL      string
+	Key      string
 	client   *jira.Client
 }
 
-func (s JiraService) GetSummaryForIssueId(issueId string) string {
-	issue, _, err := s.getClient().Issue.Get(issueId, nil)
+func (j JiraService) GetSummaryForIssueId(issueId string) string {
+	issue, _, err := j.getClient().Issue.Get(issueId, nil)
 
 	if err != nil {
 		panic(fmt.Errorf("Error: %w \n", err))
@@ -22,21 +24,31 @@ func (s JiraService) GetSummaryForIssueId(issueId string) string {
 	return issue.Fields.Summary
 }
 
-func (s *JiraService) getClient() *jira.Client {
-	if s.client == nil {
-		s.initClient()
+func (j JiraService) ExtractIssueId(s string) (string, error) {
+	r := regexp.MustCompile("(" + j.Key + "-[0-9]+)")
+
+	if !r.MatchString(s) {
+		return "", fmt.Errorf("Could not find IssueId in string: %v", s)
 	}
 
-	return s.client
+	return r.FindString(s), nil
 }
 
-func (s *JiraService) initClient() {
-	tp := jira.BasicAuthTransport{
-		Username: s.Username,
-		Password: s.Token,
+func (j *JiraService) getClient() *jira.Client {
+	if j.client == nil {
+		j.initClient()
 	}
 
-	client, err := jira.NewClient(tp.Client(), s.URL)
+	return j.client
+}
+
+func (j *JiraService) initClient() {
+	tp := jira.BasicAuthTransport{
+		Username: j.Username,
+		Password: j.Token,
+	}
+
+	client, err := jira.NewClient(tp.Client(), j.URL)
 
 	//@todo how to recognize auth failure since apparently it doesnt return an error for that
 
@@ -44,5 +56,5 @@ func (s *JiraService) initClient() {
 		fmt.Printf("Error: %w", err)
 	}
 
-	s.client = client
+	j.client = client
 }
