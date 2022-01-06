@@ -5,39 +5,11 @@ Copyright © 2021 NAME HERE <EMAIL ADDRESS>
 package main
 
 import (
-	"fmt"
-	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/tflow/cmd"
-	"os"
+	"github.com/tstrijdhorst/tflow/services"
 )
 
 func main() {
-	initConfig()
+	services.ConfigService{}.InitConfig()
 	cmd.Execute()
-}
-
-const (
-	FileName  = "config"
-	Directory = ".config/tflow"
-)
-
-func initConfig() {
-	homeDir, err := os.UserHomeDir()
-
-	if err != nil {
-		panic(fmt.Errorf("Could not find user homedir %w", err))
-	}
-
-	viper.SetConfigName(FileName)
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(homeDir + "/" + Directory)
-	err = viper.ReadInConfig()
-
-	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			panic(err)
-		}
-
-		panic(fmt.Errorf("Fatal error in config file: %w \n", err))
-	}
 }
