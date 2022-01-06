@@ -3,6 +3,7 @@ module github.com/tstrijdhorst/tflow
 go 1.17
 
 require (
+	github.com/cli/safeexec v1.0.0
 	github.com/spf13/cobra v1.3.0
 	github.com/spf13/viper v1.10.1
 	gopkg.in/andygrunwald/go-jira.v1 v1.8.0

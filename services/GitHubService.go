@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"fmt"
+	"github.com/cli/safeexec"
 	"log"
 	"os/exec"
 )
@@ -11,7 +12,8 @@ type GitHubService struct {
 }
 
 func (g GitHubService) CreatePullRequest(title string) {
-	cmd := exec.Command("gh", "pr", "create", "-t "+title, "-b ")
+	ghBin, _ := safeexec.LookPath("gh")
+	cmd := exec.Command(ghBin, "pr", "create", "-t "+title, "-b ")
 
 	var stdOut, stdErr bytes.Buffer
 	cmd.Stdout = &stdOut

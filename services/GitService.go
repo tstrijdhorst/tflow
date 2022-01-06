@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"fmt"
+	"github.com/cli/safeexec"
 	"log"
 	"os/exec"
 	"regexp"
@@ -13,7 +14,8 @@ type GitService struct {
 }
 
 func (g GitService) PushCurrentBranch() {
-	cmd := exec.Command("git", "push")
+	gitBin, _ := safeexec.LookPath("git")
+	cmd := exec.Command(gitBin, "push")
 
 	var stdOut, stdErr bytes.Buffer
 	cmd.Stdout = &stdOut
@@ -29,7 +31,8 @@ func (g GitService) PushCurrentBranch() {
 
 // GetCurrentBranchName Requires git >= 2.22
 func (g GitService) GetCurrentBranchName() string {
-	cmd := exec.Command("git", "branch", "--show-current")
+	gitBin, _ := safeexec.LookPath("git")
+	cmd := exec.Command(gitBin, "branch", "--show-current")
 
 	var stdOut, stdErr bytes.Buffer
 	cmd.Stdout = &stdOut
@@ -63,11 +66,12 @@ func (g GitService) NormalizeForGitBranchName(s string) string {
 
 // requires git >= 2.23
 func (g GitService) switchBranch(name string, create bool) {
+	gitBin, _ := safeexec.LookPath("git")
 	var cmd *exec.Cmd
 	if create {
-		cmd = exec.Command("git", "switch", "-c", name)
+		cmd = exec.Command(gitBin, "switch", "-c", name)
 	} else {
-		cmd = exec.Command("git", "switch", name)
+		cmd = exec.Command(gitBin, "switch", name)
 	}
 
 	var stdOut, stdErr bytes.Buffer
@@ -82,6 +86,7 @@ func (g GitService) switchBranch(name string, create bool) {
 }
 
 func (g GitService) branchExists(name string) bool {
-	err := exec.Command("git", "rev-parse", name).Run()
+	gitBin, _ := safeexec.LookPath("git")
+	err := exec.Command(gitBin, "rev-parse", name).Run()
 	return err == nil
 }
