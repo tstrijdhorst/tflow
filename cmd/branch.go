@@ -28,7 +28,7 @@ func createBranchFromJiraIssueId(issueId string) {
 		branchName += "/" + normalizedSummary
 	}
 
-	services.GitService{}.CreateBranchIfNotExistsAndCheckout(branchName)
+	services.GitService{}.SwitchBranchCreateIfNotExists(branchName)
 }
 
 func init() {
