@@ -3,7 +3,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/tstrijdhorst/JFlow/services"
+	"github.com/tstrijdhorst/tflow/services"
 )
 
 var branchCmd = &cobra.Command{
