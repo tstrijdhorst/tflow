@@ -20,6 +20,7 @@ func createBranchFromJiraIssueId(issueId string) {
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
 		URL:      viper.GetString("jira.url"),
+		Key:      viper.GetString("jira.key"),
 	}.GetSummaryForIssueId(issueId)
 	normalizedSummary := services.GitService{}.NormalizeForGitBranchName(issueSummary)
 

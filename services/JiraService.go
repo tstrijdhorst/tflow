@@ -10,6 +10,7 @@ type JiraService struct {
 	Token    string
 	Username string
 	URL      string
+	Key      string
 	client   *jira.Client
 }
 
@@ -24,7 +25,7 @@ func (j JiraService) GetSummaryForIssueId(issueId string) string {
 }
 
 func (j JiraService) ExtractIssueId(s string) (string, error) {
-	r := regexp.MustCompile("(DCD-[0-9]+)")
+	r := regexp.MustCompile("(" + j.Key + "[0-9]+)")
 
 	if !r.MatchString(s) {
 		return "", fmt.Errorf("Could not find IssueId in string: %v", s)
