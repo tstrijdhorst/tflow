@@ -7,7 +7,7 @@ package main
 import (
 	"fmt"
 	"github.com/spf13/viper"
-	"github.com/tstrijdhorst/JFlow/cmd"
+	"github.com/tstrijdhorst/tflow/cmd"
 	"os"
 )
 
