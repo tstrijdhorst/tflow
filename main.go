@@ -18,7 +18,7 @@ func main() {
 
 const (
 	FileName  = "config"
-	Directory = ".config/jflow"
+	Directory = ".config/tflow"
 )
 
 func initConfig() {
