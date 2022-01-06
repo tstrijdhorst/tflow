@@ -1,35 +1,51 @@
 package services
 
 import (
+	"bytes"
 	"fmt"
-	"github.com/go-git/go-git/v5"
-	"github.com/go-git/go-git/v5/plumbing"
-	"os"
+	"log"
+	"os/exec"
 	"regexp"
 	"strings"
 )
 
 type GitService struct {
-	repository *git.Repository
 }
 
-//@todo bug, for some reason this deletes files that are locally ignored?
-func (g GitService) CreateBranchIfNotExistsAndCheckout(name string) {
-	worktree, err := g.getRepository().Worktree()
+func (g GitService) PushCurrentBranch() {
+	cmd := exec.Command("git", "push")
+
+	var stdOut, stdErr bytes.Buffer
+	cmd.Stdout = &stdOut
+	cmd.Stderr = &stdErr
+
+	err := cmd.Run()
 
 	if err != nil {
-		panic(fmt.Errorf("Error getting worktree: %w", err))
+		//@todo nice error handling for common cases
+		log.Panic(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
 	}
+}
 
-	b := plumbing.NewBranchReferenceName(name)
+// GetCurrentBranchName Requires git >= 2.22
+func (g GitService) GetCurrentBranchName() string {
+	cmd := exec.Command("git", "branch", "--show-current")
 
-	// First try to checkout branch
-	err = worktree.Checkout(&git.CheckoutOptions{Create: false, Force: false, Branch: b})
+	var stdOut, stdErr bytes.Buffer
+	cmd.Stdout = &stdOut
+	cmd.Stderr = &stdErr
+
+	err := cmd.Run()
 
 	if err != nil {
-		// got an error - try to create it
-		_ = worktree.Checkout(&git.CheckoutOptions{Create: true, Force: false, Branch: b})
+		log.Panic(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
 	}
+
+	return stdOut.String()
+}
+
+func (g GitService) SwitchBranchCreateIfNotExists(name string) {
+	g.switchBranch(name, !g.branchExists(name))
 }
 
 func (g GitService) NormalizeForGitBranchName(s string) string {
@@ -45,26 +61,27 @@ func (g GitService) NormalizeForGitBranchName(s string) string {
 	return strings.TrimLeft(s, "-")
 }
 
-func (g *GitService) getRepository() *git.Repository {
-	if g.repository == nil {
-		g.initRepository()
+// requires git >= 2.23
+func (g GitService) switchBranch(name string, create bool) {
+	var cmd *exec.Cmd
+	if create {
+		cmd = exec.Command("git", "switch", "-c", name)
+	} else {
+		cmd = exec.Command("git", "switch", name)
 	}
 
-	return g.repository
+	var stdOut, stdErr bytes.Buffer
+	cmd.Stdout = &stdOut
+	cmd.Stderr = &stdErr
+
+	err := cmd.Run()
+
+	if err != nil {
+		log.Panic(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
+	}
 }
 
-func (g *GitService) initRepository() {
-	cwd, err := os.Getwd()
-
-	if err != nil {
-		panic(fmt.Errorf("Unable to get working directory %w", err))
-	}
-
-	r, err := git.PlainOpen(cwd)
-
-	if err != nil {
-		panic(fmt.Errorf("Fatal error in git repo: %w \n", err))
-	}
-
-	g.repository = r
+func (g GitService) branchExists(name string) bool {
+	err := exec.Command("git", "rev-parse", name).Run()
+	return err == nil
 }
