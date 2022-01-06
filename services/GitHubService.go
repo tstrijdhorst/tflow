@@ -13,14 +13,14 @@ type GitHubService struct {
 func (g GitHubService) CreatePullRequest(title string) {
 	cmd := exec.Command("gh", "pr", "create", "-t '"+title+"'", "-b ''")
 
-	var out bytes.Buffer
-	cmd.Stdout = &out
+	var stdOut, stdErr bytes.Buffer
+	cmd.Stdout = &stdOut
+	cmd.Stderr = &stdErr
 
 	err := cmd.Run()
 
 	if err != nil {
-		log.Fatal(err)
+		//@todo nice error handling for common cases
+		log.Fatal(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
 	}
-
-	fmt.Printf("Output: %q\n", out.String())
 }
