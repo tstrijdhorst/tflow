@@ -1,4 +1,4 @@
-module github.com/tstrijdhorst/JFlow
+module github.com/tstrijdhorst/tflow
 
 go 1.17
 
