@@ -6,6 +6,8 @@ import (
 	"github.com/tstrijdhorst/tflow/services"
 )
 
+const inProgressTransitionId string = "21"
+
 var doCmd = &cobra.Command{
 	Use:   "do <issueId>",
 	Short: "Checkout a git branch for the given jira issueId. If it doesn't exist yet it is created.",
@@ -16,12 +18,16 @@ var doCmd = &cobra.Command{
 }
 
 func doJiraIssueId(issueId string) {
-	issueSummary := services.JiraService{
+	jiraService := services.JiraService{
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
 		URL:      viper.GetString("jira.url"),
 		Key:      viper.GetString("jira.key"),
-	}.GetSummaryForIssueId(issueId)
+	}
+
+	jiraService.TransitionIssueId(issueId, inProgressTransitionId)
+	
+	issueSummary := jiraService.GetSummaryForIssueId(issueId)
 	normalizedSummary := services.GitService{}.NormalizeForGitBranchName(issueSummary)
 
 	branchName := issueId
