@@ -6,16 +6,16 @@ import (
 	"github.com/tstrijdhorst/tflow/services"
 )
 
-var branchCmd = &cobra.Command{
-	Use:   "branch <issueId>",
-	Short: "Create and checkout a git branch for the given jira issueId",
+var doCmd = &cobra.Command{
+	Use:   "do <issueId>",
+	Short: "Checkout a git branch for the given jira issueId. If it doesn't exist yet it is created.",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		createBranchFromJiraIssueId(args[0])
+		doJiraIssueId(args[0])
 	},
 }
 
-func createBranchFromJiraIssueId(issueId string) {
+func doJiraIssueId(issueId string) {
 	issueSummary := services.JiraService{
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
@@ -33,7 +33,7 @@ func createBranchFromJiraIssueId(issueId string) {
 }
 
 func init() {
-	rootCmd.AddCommand(branchCmd)
+	rootCmd.AddCommand(doCmd)
 
 	// Here you will define your flags and configuration settings.
 
