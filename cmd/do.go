@@ -4,6 +4,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/tflow/services"
+	"strings"
 )
 
 const inProgressTransitionId string = "21"
@@ -18,6 +19,8 @@ var doCmd = &cobra.Command{
 }
 
 func doJiraIssueId(issueId string) {
+	issueId = strings.TrimSpace(issueId)
+
 	jiraService := services.JiraService{
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
