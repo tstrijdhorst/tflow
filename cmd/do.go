@@ -4,24 +4,33 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/tflow/services"
+	"strings"
 )
 
-var branchCmd = &cobra.Command{
-	Use:   "branch <issueId>",
-	Short: "Create and checkout a git branch for the given jira issueId",
+const inProgressTransitionId string = "21"
+
+var doCmd = &cobra.Command{
+	Use:   "do <issueId>",
+	Short: "Checkout a git branch for the given jira issueId. If it doesn't exist yet it is created.",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		createBranchFromJiraIssueId(args[0])
+		doJiraIssueId(args[0])
 	},
 }
 
-func createBranchFromJiraIssueId(issueId string) {
-	issueSummary := services.JiraService{
+func doJiraIssueId(issueId string) {
+	issueId = strings.TrimSpace(issueId)
+
+	jiraService := services.JiraService{
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
 		URL:      viper.GetString("jira.url"),
 		Key:      viper.GetString("jira.key"),
-	}.GetSummaryForIssueId(issueId)
+	}
+
+	jiraService.TransitionIssueId(issueId, inProgressTransitionId)
+	
+	issueSummary := jiraService.GetSummaryForIssueId(issueId)
 	normalizedSummary := services.GitService{}.NormalizeForGitBranchName(issueSummary)
 
 	branchName := issueId
@@ -33,7 +42,7 @@ func createBranchFromJiraIssueId(issueId string) {
 }
 
 func init() {
-	rootCmd.AddCommand(branchCmd)
+	rootCmd.AddCommand(doCmd)
 
 	// Here you will define your flags and configuration settings.
 

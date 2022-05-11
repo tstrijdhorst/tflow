@@ -13,7 +13,7 @@ type GitHubService struct {
 
 func (g GitHubService) CreatePullRequest(title string) {
 	ghBin, _ := safeexec.LookPath("gh")
-	cmd := exec.Command(ghBin, "pr", "create", "-t "+title, "-b ")
+	cmd := exec.Command(ghBin, "pr", "create", "--title", title, "--body", "")
 
 	var stdOut, stdErr bytes.Buffer
 	cmd.Stdout = &stdOut

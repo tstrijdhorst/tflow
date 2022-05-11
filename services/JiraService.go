@@ -24,6 +24,14 @@ func (j JiraService) GetSummaryForIssueId(issueId string) string {
 	return issue.Fields.Summary
 }
 
+func (j JiraService) TransitionIssueId(issueId, transitionId string) {
+	_, err := j.getClient().Issue.DoTransition(issueId, transitionId)
+
+	if err != nil {
+		panic(fmt.Errorf("Error: %w \n", err))
+	}
+}
+
 func (j JiraService) ExtractIssueId(s string) (string, error) {
 	r := regexp.MustCompile("(" + j.Key + "-[0-9]+)")
 
