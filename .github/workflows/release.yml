@@ -1,0 +1,19 @@
+on:
+  create:
+    tags:
+      - v*
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.13.1'
+      - name: Go Build
+        run: go build
+      - name: Add artifacts to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: tflow
