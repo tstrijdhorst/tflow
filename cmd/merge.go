@@ -1,32 +1,33 @@
-/*
-Copyright © 2022 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
+	"github.com/tstrijdhorst/tflow/services"
 )
+
+var doneFlag bool
 
 // mergeCmd represents the merge command
 var mergeCmd = &cobra.Command{
 	Use:   "merge",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Merge the current PR into it's base",
+	Long: `Merge the current PR into it's base`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("merge called")
+          mergePR(doneFlag);
 	},
 }
 
+func mergePR(setIssueToDone bool) {
+  services.GitHubService{}.MergePullRequest()
+
+  if setIssueToDone {
+    //transition jira issue to done status
+  }
+} 
+
 func init() {
 	rootCmd.AddCommand(mergeCmd)
+        mergeCmd.Flags().BoolVarP(&doneFlag, "done", "d", false, "Set issue to done after merge")
 
 	// Here you will define your flags and configuration settings.
 
