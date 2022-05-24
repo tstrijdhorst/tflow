@@ -22,16 +22,16 @@ var doCmd = &cobra.Command{
 func doJiraIssueId(issueId string) {
 	issueId = strings.TrimSpace(issueId)
 
-        if _, err := strconv.Atoi(issueId); err == nil {
-          issueId = viper.GetString("jira.key") + "-" + issueId;
-        }
-
 	jiraService := services.JiraService{
 		Username: viper.GetString("jira.username"),
 		Token:    viper.GetString("jira.token"),
 		URL:      viper.GetString("jira.url"),
 		Key:      viper.GetString("jira.key"),
 	}
+        
+        if issueIdNumeric, err := strconv.Atoi(issueId); err == nil {
+          issueId = jiraService.FormatIssueId(issueIdNumeric)
+        }
 
 	jiraService.TransitionIssueId(issueId, inProgressTransitionId)
 	
