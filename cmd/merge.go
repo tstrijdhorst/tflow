@@ -2,10 +2,13 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/tflow/services"
 )
 
 var doneFlag bool
+
+const doneTransitionId string = "31"
 
 // mergeCmd represents the merge command
 var mergeCmd = &cobra.Command{
@@ -18,11 +21,26 @@ var mergeCmd = &cobra.Command{
 }
 
 func mergePR(setIssueToDone bool) {
+  print "lol"
+return
   services.GitHubService{}.MergePullRequest()
 
   if setIssueToDone {
-    //transition jira issue to done status
-  }
+	jiraService := services.JiraService{
+		Username: viper.GetString("jira.username"),
+		Token:    viper.GetString("jira.token"),
+		URL:      viper.GetString("jira.url"),
+		Key:      viper.GetString("jira.key"),
+	}
+
+	branchName := services.GitService{}.GetCurrentBranchName()
+	issueId, err := jiraService.ExtractIssueId(branchName)
+
+	if err != nil {
+		panic(err)
+	}
+        jiraService.TransitionIssueId(issueId, doneTransitionId)	
+      }
 } 
 
 func init() {
