@@ -24,6 +24,10 @@ func (j JiraService) GetSummaryForIssueId(issueId string) string {
 	return issue.Fields.Summary
 }
 
+func (j JiraService) FormatIssueId(issueNumber int) string {
+        return fmt.Sprintf("%s-%d",j.Key,issueNumber);
+}
+
 func (j JiraService) TransitionIssueId(issueId, transitionId string) {
 	_, err := j.getClient().Issue.DoTransition(issueId, transitionId)
 

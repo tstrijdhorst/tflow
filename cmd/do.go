@@ -5,12 +5,13 @@ import (
 	"github.com/spf13/viper"
 	"github.com/tstrijdhorst/tflow/services"
 	"strings"
+        "strconv"
 )
 
 const inProgressTransitionId string = "21"
 
 var doCmd = &cobra.Command{
-	Use:   "do <issueId>",
+	Use:   "do <issueId> (with or without the KEY-)",
 	Short: "Checkout a git branch for the given jira issueId. If it doesn't exist yet it is created.",
 	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -27,6 +28,10 @@ func doJiraIssueId(issueId string) {
 		URL:      viper.GetString("jira.url"),
 		Key:      viper.GetString("jira.key"),
 	}
+        
+        if issueIdNumeric, err := strconv.Atoi(issueId); err == nil {
+          issueId = jiraService.FormatIssueId(issueIdNumeric)
+        }
 
 	jiraService.TransitionIssueId(issueId, inProgressTransitionId)
 	
