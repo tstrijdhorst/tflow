@@ -37,7 +37,8 @@ func createPR() {
 
 	services.GitService{}.PushCurrentBranch()
 
-	services.GitHubService{}.CreatePullRequest(prTitle)
+        url := services.GitHubService{}.CreatePullRequest(prTitle)
+        fmt.Println(url)
 }
 
 func init() {
