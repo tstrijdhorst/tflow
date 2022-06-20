@@ -7,6 +7,7 @@ import (
 )
 
 var doneFlag bool
+var checkoutBaseFlag bool
 
 const doneTransitionId string = "31"
 
@@ -16,13 +17,11 @@ var mergeCmd = &cobra.Command{
 	Short: "Merge the current PR into it's base",
 	Long: `Merge the current PR into it's base`,
 	Run: func(cmd *cobra.Command, args []string) {
-          mergePR(doneFlag);
+          mergePR(doneFlag, checkoutBaseFlag);
 	},
 }
 
-func mergePR(setIssueToDone bool) {
-  print "lol"
-return
+func mergePR(setIssueToDone bool, checkoutBase bool) {
   services.GitHubService{}.MergePullRequest()
 
   if setIssueToDone {
@@ -40,12 +39,18 @@ return
 		panic(err)
 	}
         jiraService.TransitionIssueId(issueId, doneTransitionId)	
-      }
+  }
+
+  if checkoutBase {
+      baseBranch := services.GitHubService{}.GetBaseBranchName()
+      services.GitService{}.SwitchBranchCreateIfNotExists(baseBranch)
+  }
 } 
 
 func init() {
 	rootCmd.AddCommand(mergeCmd)
         mergeCmd.Flags().BoolVarP(&doneFlag, "done", "d", false, "Set issue to done after merge")
+        mergeCmd.Flags().BoolVarP(&checkoutBaseFlag, "checkout-base", "c", false, "Checks out the basebranch after merge")
 
 	// Here you will define your flags and configuration settings.
 

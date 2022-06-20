@@ -2,13 +2,12 @@ package cmd
 
 import (
 	"os"
-
 	"github.com/spf13/cobra"
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "JFlow",
+	Use:   "tflow",
 	Short: "A terminal centric workflow for Jira / Github",
 	Long:  ``,
 	// Uncomment the following line if your bare application
@@ -29,8 +28,6 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.JFlow.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

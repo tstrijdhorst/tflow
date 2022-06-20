@@ -25,7 +25,6 @@ func createPR() {
 		Key:      viper.GetString("jira.key"),
 	}
 
-	fmt.Println("Extracting issue-id from branch name")
 	branchName := services.GitService{}.GetCurrentBranchName()
 	issueId, err := jiraService.ExtractIssueId(branchName)
 
@@ -33,16 +32,13 @@ func createPR() {
 		panic(err)
 	}
 
-	fmt.Println("Fetching issue summary from Jira")
 	issueSummary := jiraService.GetSummaryForIssueId(issueId)
 	prTitle := fmt.Sprintf("%v %v", issueId, issueSummary)
-	fmt.Println("Pr Title Generated: ", prTitle)
 
-	fmt.Println("Pushing current branch")
 	services.GitService{}.PushCurrentBranch()
 
-	fmt.Println("Creating PR at GitHub")
-	services.GitHubService{}.CreatePullRequest(prTitle)
+        url := services.GitHubService{}.CreatePullRequest(prTitle)
+        fmt.Println(url)
 }
 
 func init() {

@@ -2,17 +2,18 @@ package services
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
-	"github.com/cli/safeexec"
 	"log"
 	"os/exec"
-        "json"
+	"strings"
+	"github.com/cli/safeexec"
 )
 
 type GitHubService struct {
 }
 
-func (g GitHubService) CreatePullRequest(title string) {
+func (g GitHubService) CreatePullRequest(title string) string {
 	ghBin, _ := safeexec.LookPath("gh")
 	cmd := exec.Command(ghBin, "pr", "create", "--title", title, "--body", "")
 
@@ -27,7 +28,7 @@ func (g GitHubService) CreatePullRequest(title string) {
 		log.Fatal(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
 	}
 
-	fmt.Println(stdOut.String())
+        return strings.TrimSpace(stdOut.String())
 }
 
 func (g GitHubService) MergePullRequest() {
@@ -65,16 +66,16 @@ func (g GitHubService) GetBaseBranchName() string {
 	}
 
         var js struct {
-          baseRefName string `json:"baseRefName"`
+          BaseRefName string `json:"baseRefName"`
         }
 
-        err = json.Unmarshal(stdOut, &js)
+        err = json.Unmarshal(stdOut.Bytes(), &js)
 
 	if err != nil {
 		//@todo nice error handling for common cases
 		log.Fatal(fmt.Errorf("ERROR: %v StdOut: %v StdErr: %v", err, stdOut.String(), stdErr.String()))
 	}
 
-        return js.baseRefName
+        return js.BaseRefName
 }
 
