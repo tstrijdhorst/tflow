@@ -12,8 +12,20 @@ jobs:
         with:
           go-version: '^1.13.1'
       - name: Go Build
-        run: go build
-      - name: Add artifacts to release
-        uses: softprops/action-gh-release@v1
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o ./build/linux-amd64/tflow
+          GOOS=darwin GOARCH=amd64 go build -o ./build/osx-amd64/tflow
+          # GOOS=darwin GOARCH=arm64 go build -o ./build/osx-m1/tflow
+          # lol
+          GOOS=windows GOARCH=amd64 go build -o ./build/windows-amd64/tflow
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
         with:
-          files: tflow
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ./build/linux-amd64/tflow
+          asset_name: tflow-linux-amd64
+          tag: ${{ github.ref }}
+          overwrite: true
+          prerelease: true
+          body: "Prerelease for testing the build pipeline"
