@@ -8,7 +8,7 @@ _Disclaimer: I'm mainly making this to use the Jira webinterface as little as po
 
 * Create/checkout git branch based on jira issue
 * Create github PR based on jira issue
-* Merge PRs, refresh master and optionally set issue to Done
+* Merge PRs, optionally refresh base and set issue to Done
 
 # Limitations
 
