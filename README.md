@@ -1,4 +1,4 @@
-![logo](assets/logo.png)
+![logo](https://user-images.githubusercontent.com/1564322/185397346-49485044-364a-4936-b561-3d6dcbb7b3da.svg)
 
 A terminal centric workflow for Jira / Github written in Go
 
