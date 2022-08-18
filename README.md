@@ -1,4 +1,4 @@
-![logo](assets/logo.webp)
+![logo](assets/logo.png)
 
 # TFlow
 A terminal centric workflow for Jira / Github written in Go
