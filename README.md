@@ -14,6 +14,7 @@ A terminal centric workflow for Jira / Github written in Go
 
 # Dependencies
 
+* Go >= 1.17
 * Git >= 2.23
 * [Github CLI](https://github.com/cli/cli) (configured and ready to go)
 
@@ -24,3 +25,8 @@ A terminal centric workflow for Jira / Github written in Go
 3. Call the binary without any arguments and it will interactively generate a configfile for you
 4. ???
 5. Profit
+
+# Building it yourself
+
+1. Checkout this repository somewhere
+2. Execute `go install`
