@@ -1,7 +1,8 @@
 ![logo](assets/logo.png)
 
-# TFlow
 A terminal centric workflow for Jira / Github written in Go
+
+_Disclaimer: I'm mainly making this to use the Jira webinterface as little as possible. Use at your own risk. PRs are very welcome as long as you use a similar codestyle._
 
 # Features
 
