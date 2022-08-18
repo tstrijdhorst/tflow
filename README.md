@@ -23,7 +23,7 @@ _Disclaimer: I'm mainly making this to use the Jira webinterface as little as po
 
 # Installation from binary
 
-1. Download the binary release for your platform (Linux,Mac OSX or Windows on x64)
+1. Download the binary release for your platform (Linux, Mac OSX or Windows on x64)
 2. Put the binary somewhere in your $PATH to easily reach it via terminal
 3. Call the binary without any arguments and it will interactively generate a configfile for you
 4. ???
