@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"gopkg.in/andygrunwald/go-jira.v1"
+	"strings"
 	"regexp"
 )
 
@@ -26,6 +27,11 @@ func (j JiraService) GetSummaryForIssueId(issueId string) string {
 
 func (j JiraService) FormatIssueId(issueNumber int) string {
         return fmt.Sprintf("%s-%d",j.Key,issueNumber);
+}
+
+func (j JiraService) FormatIssueURL(issueId string) string {
+        jiraURL := strings.TrimSuffix(j.URL,"/")
+        return fmt.Sprintf("%v/browse/%v",jiraURL,issueId);
 }
 
 func (j JiraService) TransitionIssueId(issueId, transitionId string) {

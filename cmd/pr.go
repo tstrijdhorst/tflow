@@ -10,8 +10,8 @@ import (
 // prCmd represents the merge command
 var prCmd = &cobra.Command{
 	Use:   "pr",
-	Short: "Creates a PR for the current branch with a title equal to the issue id and summary",
-	Long:  `Creates a PR for the current branch with a title equal to the issue id and summary`,
+	Short: "Creates a PR for the current branch",
+	Long:  `Creates a PR for the current branch with a title equal to the issue id and summary and a body containing a link to the issue`,
 	Run: func(cmd *cobra.Command, args []string) {
 		createPR()
 	},
@@ -34,11 +34,12 @@ func createPR() {
 
 	issueSummary := jiraService.GetSummaryForIssueId(issueId)
 	prTitle := fmt.Sprintf("%v %v", issueId, issueSummary)
+	prBody := jiraService.FormatIssueURL(issueId)
 
 	services.GitService{}.PushCurrentBranch()
 
-        url := services.GitHubService{}.CreatePullRequest(prTitle)
-        fmt.Println(url)
+	url := services.GitHubService{}.CreatePullRequest(prTitle,prBody)
+	fmt.Println(url)
 }
 
 func init() {
