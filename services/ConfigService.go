@@ -44,7 +44,16 @@ func (c ConfigService) InitConfig() {
 			viper.Set("jira.key", answers.Key)
 			viper.Set("jira.token", answers.Token)
 
-			err := viper.WriteConfigAs(homeDir + "/" + Directory + "/" + FileName + ".yml")
+			configDirPath := homeDir + "/" + Directory + "/"
+			fmt.Println("LOL")
+			if _, err := os.Stat(configDirPath); os.IsNotExist(err) {
+				err := os.Mkdir(configDirPath, 0700)
+				if err != nil {
+					panic(err)
+				}
+			}
+
+			err := viper.WriteConfigAs(configDirPath + FileName + ".yml")
 			if err != nil {
 				panic(err)
 			}
