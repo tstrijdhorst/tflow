@@ -45,7 +45,6 @@ func (c ConfigService) InitConfig() {
 			viper.Set("jira.token", answers.Token)
 
 			configDirPath := homeDir + "/" + Directory + "/"
-			fmt.Println("LOL")
 			if _, err := os.Stat(configDirPath); os.IsNotExist(err) {
 				err := os.Mkdir(configDirPath, 0700)
 				if err != nil {
