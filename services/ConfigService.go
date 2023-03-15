@@ -43,6 +43,10 @@ func (c ConfigService) InitConfig() {
 			viper.Set("jira.url", answers.URL)
 			viper.Set("jira.username", answers.Username)
 			viper.Set("jira.key", answers.Key)
+			// set a default value if nothing is entered by the user
+			if answers.BranchSeparator == "" {
+				answers.BranchSeparator = "--"
+			}
 			viper.Set("git.branch_separator", answers.BranchSeparator)
 			viper.Set("jira.token", answers.Token)
 
@@ -86,8 +90,7 @@ func (c ConfigService) getConfigInteractive() configAnswers {
 		},
 		{
 			Name:     "branchSeparator",
-			Prompt:   &survey.Input{Message: "How do you want to separate the Jira key from the Jira issue title in your branch name? Most people use a slash ('/') here."},
-			Validate: survey.Required,
+			Prompt:   &survey.Input{Message: "How do you want to separate the Jira key from the Jira issue title in your branch name? (press 'enter' for default: --)"},
 		},
 		{
 			Name:     "token",
