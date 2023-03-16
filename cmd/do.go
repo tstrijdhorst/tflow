@@ -40,7 +40,7 @@ func doJiraIssueId(issueId string) {
 
 	branchName := issueId
 	if normalizedSummary != "" {
-		branchName += "/" + normalizedSummary
+		branchName += viper.GetString("git.branch_separator") + normalizedSummary
 	}
 
 	services.GitService{}.SwitchBranchCreateIfNotExists(branchName)

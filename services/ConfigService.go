@@ -16,10 +16,11 @@ type ConfigService struct {
 }
 
 type configAnswers struct {
-	URL      string
-	Username string
-	Key      string
-	Token    string
+	URL             string
+	Username        string
+	Key             string
+	BranchSeparator string
+	Token           string
 }
 
 func (c ConfigService) InitConfig() {
@@ -42,6 +43,11 @@ func (c ConfigService) InitConfig() {
 			viper.Set("jira.url", answers.URL)
 			viper.Set("jira.username", answers.Username)
 			viper.Set("jira.key", answers.Key)
+			// set a default value if nothing is entered by the user
+			if answers.BranchSeparator == "" {
+				answers.BranchSeparator = "--"
+			}
+			viper.Set("git.branch_separator", answers.BranchSeparator)
 			viper.Set("jira.token", answers.Token)
 
 			configDirPath := homeDir + "/" + Directory + "/"
@@ -81,6 +87,10 @@ func (c ConfigService) getConfigInteractive() configAnswers {
 			Name:     "key",
 			Prompt:   &survey.Input{Message: "What key is your project using (e.g TFLOW)?"},
 			Validate: survey.Required,
+		},
+		{
+			Name:     "branchSeparator",
+			Prompt:   &survey.Input{Message: "How do you want to separate the Jira key from the Jira issue title in your branch name? (press 'enter' for default: --)"},
 		},
 		{
 			Name:     "token",
